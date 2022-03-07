@@ -1,0 +1,61 @@
+﻿@page
+@model RegisterModel
+@{
+    ViewData["Title"] = "Регистрация";
+}
+
+
+
+<div class="row justify-content-center mt-5">
+    <div>
+        <form asp-route-returnUrl="@Model.ReturnUrl" method="post">
+            <h1>@ViewData["Title"]</h1>
+            <hr />
+            <h4>Создать новый аккаунт</h4>
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="form-group w-50">
+                <label asp-for="Input.FistName"></label>
+                <input asp-for="Input.FistName" class="form-control" />
+                <span asp-validation-for="Input.FistName" class="text-danger"></span>
+            </div>
+            <div class="form-group w-50">
+                <label asp-for="Input.LastName"></label>
+                <input asp-for="Input.LastName" class="form-control" />
+                <span asp-validation-for="Input.LastName" class="text-danger"></span>
+            </div>
+            <div class="form-group w-50">
+                <label asp-for="Input.Address"></label>
+                <input asp-for="Input.Address" class="form-control" />
+                <span asp-validation-for="Input.Address" class="text-danger"></span>
+            </div>
+            <div class="form-group w-50">
+                <label>Почта</label>
+                <input asp-for="Input.Email" class="form-control" />
+                <span asp-validation-for="Input.Email" class="text-danger"></span>
+                <div id="passwordHelpBlock" class="form-text">
+                    Ваша почта должна заканчиваться на  @("@test.com.")
+                </div>
+            </div>
+            <div class="form-group w-50">
+                <label>Пароль</label>
+                <input asp-for="Input.Password" class="form-control" />
+                <span asp-validation-for="Input.Password" class="text-danger"></span>
+                <div id="passwordHelpBlock" class="form-text">
+                    Ваш пароль должен состоять более чем из 5 символов, содержать буквы и цифры и не должен содержать пробелов, специальных символов или эмодзи.
+                </div>
+
+            </div>
+            <div class="form-group w-50">
+                <label>Повторный пароль</label>
+                <input asp-for="Input.ConfirmPassword" class="form-control" />
+                <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+            </div>
+            <br />
+            <button type="submit" class="btn btn-outline-secondary">Регистрация</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

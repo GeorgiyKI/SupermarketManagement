@@ -1,0 +1,116 @@
+﻿@page "/cart/{cashiername}"
+@inject IGetTransactionsUseCase GetTransactionsUseCase
+
+@inject IJSRuntime JsRuntime
+@using Microsoft.AspNetCore.Http
+@inject UserManager<AppUser> _userManager
+@inject IHttpContextAccessor HttpContext
+@using Microsoft.AspNetCore.Identity;
+@using WebApp.Areas.Identity.Data;
+@inject NavigationManager NavigationManager
+@inject ISellProductUseCase SellProductUseCase
+@inject IDeleteTransactionUseCase DeleteTransactionUseCase
+
+@if (transactions != null)
+{
+
+    <body class="u-body u-xl-mode">
+        <section class="u-align-center u-black u-clearfix u-section-1 text-e" id="sec-0c13">
+            <div class="u-clearfix u-sheet u-valign-middle u-sheet-1">
+                <h1 class="u-text u-text-default u-text-1">СПАСИБО ЗА ПОКУПКУ</h1>
+            </div>
+        </section>
+        <table class="container table">
+            <thead>
+                <tr>
+                    <th>Дата</th>
+                    <th>Продукт</th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th style="text-align:right">Цена</th>
+                    <th style="text-align:right">Всего</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var tran in transactions)
+                {
+                    <tr>
+                        <td>@tran.TimeStamp.ToString("yyyy-MM-dd hh:mm")</td>
+                        <td>@tran.ProductName</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td><button class="btn btn-secondary" @onclick="() => Delete(tran.TransactionId)">Убрать</button></td>
+                        <td style="text-align:right">@tran.Price р.</td>
+                        <td style="text-align:right">@(tran.SoldQty*tran.Price) р.</td>
+                    </tr>
+                }
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="6">&nbsp;</td>
+                    <td style="text-align:right">
+                        <b>Итог:</b>
+                    </td>
+                    <td style="text-align:right">
+                        <b>
+                            @transactions.Sum(x => x.Price * x.SoldQty) р.
+                        </b>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="7">&nbsp;</td>
+                    <td style="text-align:right">
+                        <button class="btn btn-dark" @onclick="() => Sell(transactions.ToList())">Купить</button>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+
+    </body>
+}
+
+@code {
+    private IEnumerable<Transaction> transactions;
+
+    public AppUser User { get; set; }
+    [Parameter]
+    public string CashierName { get; set; }
+
+    protected override void OnInitialized()
+    {
+        transactions = GetTransactionsUseCase.Execute(CashierName, new DateTime(2015, 7, 20), DateTime.Today.AddDays(1));
+        transactions = transactions.Where(p => p.IsBuyed == false);
+    }
+
+    void Delete(int transactionId)
+    {
+        DeleteTransactionUseCase.Execute(transactionId);
+       
+    }
+
+    async Task<AppUser> GetUser() => await _userManager.GetUserAsync(HttpContext.HttpContext.User);
+
+    async Task Sell(List<Transaction> transactions)
+    {
+        User = await GetUser();
+        decimal price = (decimal)transactions.Sum(x => x.Price * x.SoldQty);
+        if (price < User.Money)
+        {
+            User.Money -= price;
+            await _userManager.UpdateAsync(User);
+            for (int i = 0; i < transactions.Count; i++)
+            {
+                SellProductUseCase.Execute(transactions[i].CashierName, transactions[i].ProductId, 1, true);
+                DeleteTransactionUseCase.Execute(transactions[i].TransactionId);
+            }
+            NavigationManager.NavigateTo($"/cart/{CashierName}", true);
+        }
+        else
+        {
+            await JsRuntime.InvokeVoidAsync("alert", "Недостаточно денег для покупки!"); // Alert
+        }
+    }
+}

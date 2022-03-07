@@ -1,0 +1,52 @@
+﻿
+@page "/account/delete"
+@using Microsoft.AspNetCore.Http
+@inject UserManager<AppUser> _userManager
+@inject IHttpContextAccessor HttpContext
+@using Microsoft.AspNetCore.Identity;
+@using WebApp.Areas.Identity.Data;
+@inject NavigationManager NavigationManager
+@inject SignInManager<AppUser> _signInManager
+
+<section class="u-align-center u-clearfix u-section-1" id="sec-d796">
+    <div class="u-clearfix u-sheet u-valign-top u-sheet-1">
+        <div class="u-expanded-width u-tab-links-align-center u-tabs u-tabs-1">
+            <ul class="u-spacing-15 u-tab-list u-unstyled" role="tablist">
+                <li class="u-tab-item" role="presentation">
+                    <a class="u-active-black u-border-2 u-border-grey-75 u-button-style u-tab-link u-white u-tab-link-1" id="link-tab-0da5" href="/account/about" role="tab" aria-selected="false">История покупок</a>
+                </li>
+                <li class="u-tab-item" role="presentation">
+                    <a class="u-active-black u-border-2 u-border-grey-75 u-button-style u-tab-link u-white u-tab-link-2" id="link-tab-aa8f" href="/account/pay" role="tab" aria-selected="false">Пополнение кошелька</a>
+                </li>
+                <li class="u-tab-item" role="presentation">
+                    <a class="active u-active-black u-border-2 u-border-grey-75 u-button-style u-tab-link u-white u-tab-link-3" id="link-tab-2917" href="/account/delete" role="tab" aria-controls="tab-2917" aria-selected="true">Удаление данных</a>
+                </li>
+            </ul>
+            <div class="u-tab-content">
+                <div class="u-container-style u-tab-active u-tab-pane u-white u-tab-pane-3" id="tab-2917" role="tabpanel" aria-labelledby="link-tab-2917">
+                    <div class="u-container-layout u-container-layout-3">
+                        <h1 class="u-text u-text-default u-text-4">Внимание!</h1>
+                        <h3 class="u-text u-text-default u-text-4 text-center">После нажатия на кнопку, ваш аккаунт будет безвозратно удален!</h3>
+                        <br />
+                        <form action="/Identity/Account/Logout?returnUrl=%2F" class="text-center" method="post">
+                            <button type="submit" class="btn btn-outline-dark u-text" @onclick="() => DeleteAcc()">Удалить</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@code { protected async Task DeleteAcc()
+    {
+
+        var user = await _userManager.GetUserAsync(HttpContext.HttpContext.User);
+        var result = await _userManager.DeleteAsync(user);
+        var userId = await _userManager.GetUserIdAsync(user);
+    }
+
+  
+
+    }
+

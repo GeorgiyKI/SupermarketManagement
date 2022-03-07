@@ -1,0 +1,35 @@
+﻿@inherits LayoutComponentBase
+@using Microsoft.AspNetCore.Http
+@using Microsoft.AspNetCore.Identity;
+@using WebApp.Areas.Identity.Data;
+@inject IViewCategoriesUseCase ViewCategoriesUseCase
+@inject NavigationManager NavigationManager
+@inject UserManager<AppUser> _userManager
+@inject IHttpContextAccessor HttpContext
+
+<Header></Header>
+
+<AuthorizeView Policy="AdminOnly">
+    <Admin></Admin>
+</AuthorizeView>
+
+<main>
+    @Body
+</main>
+
+<Footer></Footer>
+
+@code {
+    private IEnumerable<Category> categories;
+
+    [CascadingParameter]
+    private Task<AuthenticationState> _authState { get; set; }
+
+
+    public decimal Money;
+
+    protected override async Task OnInitializedAsync()
+    {
+       
+    }
+}

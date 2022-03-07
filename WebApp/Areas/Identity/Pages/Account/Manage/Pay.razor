@@ -1,0 +1,68 @@
+﻿
+@page "/account/pay"
+
+@inject IJSRuntime JsRuntime
+@using Microsoft.AspNetCore.Http
+@inject UserManager<AppUser> _userManager
+@inject IHttpContextAccessor HttpContext
+@using Microsoft.AspNetCore.Identity;
+@using WebApp.Areas.Identity.Data;
+@inject NavigationManager NavigationManager
+
+
+
+<section class="u-align-center u-clearfix u-section-1" id="sec-d796">
+    <div class="u-clearfix u-sheet u-valign-top u-sheet-1">
+        <div class="u-expanded-width u-tab-links-align-center u-tabs u-tabs-1">
+            <ul class="u-spacing-15 u-tab-list u-unstyled" role="tablist">
+                <li class="u-tab-item" role="presentation">
+                    <a class="u-active-black u-border-2 u-border-grey-75 u-button-style u-tab-link u-white u-tab-link-1" id="link-tab-0da5" href="/account/about" role="tab" aria-controls="tab-0da5" aria-selected="false">История покупок</a>
+                </li>
+                <li class="u-tab-item" role="presentation">
+                    <a class="active u-active-black u-border-2 u-border-grey-75 u-button-style u-tab-link u-white u-tab-link-2" id="link-tab-aa8f" href="/account/pay" role="tab" aria-controls="tab-aa8f" aria-selected="true">Пополнение кошелька</a>
+                </li>
+                <li class="u-tab-item" role="presentation">
+                    <a class="u-active-black u-border-2 u-border-grey-75 u-button-style u-tab-link u-white u-tab-link-3" id="link-tab-2917" href="/account/delete" role="tab" aria-controls="tab-2917" aria-selected="false">Удаление данных</a>
+                </li>
+            </ul>
+            <div class="u-tab-content">
+                <div class="u-container-style u-tab-active u-tab-pane u-white u-tab-pane-2" id="tab-aa8f" role="tabpanel" aria-labelledby="link-tab-aa8f">
+                    <div class="u-container-layout u-container-layout-2">
+                        <h1 class="u-text u-text-default u-text-3">Больше денег - больше покупок!</h1>
+                        <div class="u-form u-form-1">
+                            <form action="#" method="POST" class="u-clearfix u-form-spacing-10 u-form-vertical u-inner-form" source="custom" name="form" style="padding: 10px;">
+                                <div class="u-form-group u-form-name">
+                                    <label for="name-7eaf" class="u-form-control-hidden u-label"></label>
+                                    <input @bind="money" type="text" placeholder="Введите нужную сумму для пополнения" id="name-7eaf" name="name" class="u-border-1 u-border-grey-30 u-input u-input-rectangle u-white" required="">
+                                </div>
+                                <div class="u-align-center u-form-group u-form-submit" @onclick="() => AddMoney(money)">
+                                    <p class="u-border-2 u-border-black u-btn u-btn-submit u-button-style u-hover-black u-none u-text-black u-text-hover-white u-btn-1">Пополнить</p>
+                                    <input type="submit" value="submit" class="u-form-control-hidden">
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@code
+{ public AppUser User { get; set; }
+    public decimal money;
+
+    private async Task AddMoney(decimal i)
+    {
+        User = await _userManager.GetUserAsync(HttpContext.HttpContext.User);
+        if (User.Money + money < decimal.MaxValue)
+        {
+            User.Money += money;
+            await _userManager.UpdateAsync(User);
+            NavigationManager.NavigateTo("/account/pay", true);
+        }
+        else
+        {
+            await JsRuntime.InvokeVoidAsync("alert", "Баланс слишком большой для пополнения!"); 
+        }
+    } }

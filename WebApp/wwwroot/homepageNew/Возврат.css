@@ -1,0 +1,141 @@
+ .u-section-1 {
+  background-image: none;
+}
+
+.u-section-1 .u-sheet-1 {
+  min-height: 249px;
+}
+
+.u-section-1 .u-text-1 {
+  line-height: 1.2;
+  font-style: italic;
+  font-weight: bold;
+  text-transform: none;
+  margin: 60px 82px;
+}
+
+@media (max-width: 1199px) {
+  .u-section-1 .u-text-1 {
+    width: auto;
+    margin-left: 31px;
+    margin-right: 31px;
+  }
+}
+
+@media (max-width: 991px) {
+  .u-section-1 .u-text-1 {
+    height: 39px;
+    margin-left: 40px;
+    margin-right: 40px;
+  }
+}
+
+@media (max-width: 575px) {
+  .u-section-1 .u-sheet-1 {
+    min-height: 230px;
+  }
+
+  .u-section-1 .u-text-1 {
+    margin-left: 0;
+    margin-right: 0;
+  }
+}.u-section-2 .u-sheet-1 {
+  min-height: 707px;
+}
+
+.u-section-2 .u-text-1 {
+  line-height: 1.2;
+  font-size: 1.875rem;
+  width: 831px;
+  margin: 41px auto 0;
+}
+
+.u-section-2 .u-text-2 {
+  line-height: 1.2;
+  font-size: 1.875rem;
+  width: 831px;
+  margin: 50px auto 0;
+}
+
+.u-section-2 .u-text-3 {
+  font-size: 1.5rem;
+  width: 831px;
+  margin: 20px auto 0;
+}
+
+.u-section-2 .u-text-4 {
+  line-height: 1.2;
+  font-size: 1rem;
+  width: 859px;
+  margin: 50px auto 41px;
+}
+
+@media (max-width: 1199px) {
+  .u-section-2 .u-text-2 {
+    margin-left: 55px;
+    margin-right: 55px;
+  }
+
+  .u-section-2 .u-text-3 {
+    margin-left: 55px;
+    margin-right: 55px;
+  }
+}
+
+@media (max-width: 991px) {
+  .u-section-2 .u-text-1 {
+    width: 720px;
+  }
+
+  .u-section-2 .u-text-2 {
+    margin-left: 0;
+    margin-right: 0;
+    width: 720px;
+  }
+
+  .u-section-2 .u-text-3 {
+    margin-left: 0;
+    margin-right: 0;
+    width: 720px;
+  }
+
+  .u-section-2 .u-text-4 {
+    width: 720px;
+  }
+}
+
+@media (max-width: 767px) {
+  .u-section-2 .u-text-1 {
+    width: 540px;
+  }
+
+  .u-section-2 .u-text-2 {
+    width: 540px;
+  }
+
+  .u-section-2 .u-text-3 {
+    width: 540px;
+  }
+
+  .u-section-2 .u-text-4 {
+    width: 540px;
+  }
+}
+
+@media (max-width: 575px) {
+  .u-section-2 .u-text-1 {
+    width: 340px;
+  }
+
+  .u-section-2 .u-text-2 {
+    width: 340px;
+  }
+
+  .u-section-2 .u-text-3 {
+    width: 340px;
+  }
+
+  .u-section-2 .u-text-4 {
+    width: 340px;
+  }
+}

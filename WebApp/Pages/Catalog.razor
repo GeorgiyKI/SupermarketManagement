@@ -1,0 +1,149 @@
+﻿
+@page "/catalog/{categoryname}/{page:int}"
+
+@using Microsoft.AspNetCore.Http
+@inject IJSRuntime JsRuntime
+@inject IGetCategoryByNameUseCase GetCategoryByNameUseCase
+@inject IViewProductsByCategoryName ViewProductsByCategoryName
+@inject IHttpContextAccessor httpContextAccessor
+@inject NavigationManager NavigationManager
+@inject ISellProductUseCase SellProductUseCase
+@inject UserManager<AppUser> _userManager
+@using Microsoft.AspNetCore.Identity;
+@using WebApp.Areas.Identity.Data;
+
+<body class="u-body u-xl-mode">
+    <section class="u-align-center u-black u-clearfix u-section-1" id="sec-35cf">
+        <div class="u-clearfix u-sheet u-valign-middle u-sheet-1">
+            <h1 class="u-text u-text-default u-text-1">@Category.Name</h1>
+        </div>
+    </section>
+
+    @foreach (var item in Products)
+    {
+        <section class="u-clearfix u-section-2" id="sec-ca49">
+            <div class="u-clearfix u-sheet u-valign-middle u-sheet-1">
+                <div class="u-clearfix u-expanded-width u-gutter-10 u-layout-wrap u-layout-wrap-1">
+                    <div class="u-layout" style="">
+                        <div class="u-layout-row" style="">
+                            <div class="u-align-center u-container-style u-layout-cell u-left-cell u-size-30 u-size-xs-60 u-layout-cell-1" src="">
+                                <div class="u-container-layout u-valign-middle u-container-layout-1" src="">
+                                    @if (item.ImgUrl != null)
+                                    {
+                                        <img class="u-hover-feature u-image u-image-round u-radius-29 u-image-1" src="@item.ImgUrl" data-image-width="1080" data-image-height="1080">
+                                    }
+                                    else
+                                    {
+                                        <img class="u-hover-feature u-image u-image-round u-radius-29 u-image-1" src="homepageNew/images/14.svg" data-image-width="1080" data-image-height="1080">
+                                    }
+                                </div>
+                            </div>
+                            <div class="u-container-style u-layout-cell u-right-cell u-size-30 u-size-xs-60 u-layout-cell-2" src="">
+                                <div class="u-container-layout u-container-layout-2">
+                                    <h2 class="u-align-center u-custom-font u-font-oswald u-text">@item.Name</h2>
+                                    <p class="u-align-center u-text u-text-2"> @item.Desctiption</p>
+                                    <p class="text-end">Стоимость: p. @item.Price&nbsp;</p>
+                                    <p @onclick="() => Sell(item)" class="u-border-2 u-border-black u-btn u-btn-round u-button-style u-hover-black u-none u-radius-50 u-text-black u-text-hover-white u-btn-1">Добавить</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    }
+
+    @if (count != Products.Count())
+    {
+
+        <nav>
+            <ul class="pagination justify-content-center">
+                @if (Page > 1)
+                {
+                    <li class="page-item" @onclick="@(() => NavigationManager.NavigateTo($"/catalog/{CategoryName}/{--Page}", true))"><p class="page-link">Назад</p></li>
+                }
+
+                @foreach (var item in mas)
+                {
+                    if (Page == item)
+                    {
+                        <li class="page-item active"><p class="page-link " @onclick="@(() => ToThePage(item))">@item</p></li>
+                    }
+                    else
+                    {
+                        <li class="page-item"><p class="page-link" @onclick="@(() => ToThePage(item))">@item</p></li>
+                    }
+                }
+
+                @if (Page * pageSize < count)
+                {
+                    <li class="page-item" @onclick="@(() => NavigationManager.NavigateTo($"/catalog/{CategoryName}/{++Page}", true))"><p class="page-link">Дальше</p></li>
+                }
+            </ul>
+        </nav>
+    }
+</body>
+
+@code {
+    [Parameter]
+    public string CategoryName { get; set; }
+
+    public AppUser User { get; set; }
+
+    public int[] mas;
+
+    public int pageSize = 5;
+    public int count;
+
+    [Parameter]
+    public int Page { get; set; }
+
+    private Product selectedProduct;
+
+    private Category Category;
+
+    private IEnumerable<Product> Products;
+
+    [CascadingParameter]
+    private Task<AuthenticationState> _authState { get; set; }
+
+
+    private AuthenticationState authState;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Category = GetCategoryByNameUseCase.Execute(CategoryName);
+        Products = ViewProductsByCategoryName.Execute(CategoryName);
+        count = Products.Count();
+        Products = Products.Skip((Page - 1) * pageSize).Take(pageSize);
+
+        mas = new int[count];
+        for (int i = 1; (i - 1) * pageSize < count; i++)
+        {
+            mas[i - 1] = i;
+        }
+
+
+        User = await _userManager.GetUserAsync(httpContextAccessor.HttpContext.User);
+    }
+
+    public void ToThePage(int numb)
+    {
+        NavigationManager.NavigateTo($"/catalog/{CategoryName}/{numb}", true);
+    }
+
+    public async Task Sell(Product productToSell)
+    {
+        if (User != null)
+        {
+            SellProductUseCase.Execute(User.FirstName + User.LastName, productToSell.ProductId, 1, false);
+            NavigationManager.NavigateTo($"/catalog/{Category.Name}", true);
+
+        }
+        else
+        {
+            await JsRuntime.InvokeVoidAsync("alert", "Зарегистрируйтесь или авторизируйтесь для покупки товара!"); // Alert
+        }
+    }
+}

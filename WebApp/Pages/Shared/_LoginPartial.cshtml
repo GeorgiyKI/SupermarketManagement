@@ -1,0 +1,35 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using WebApp.Areas.Identity.Data
+
+@inject SignInManager<AppUser> SignInManager
+@inject UserManager<AppUser> UserManager
+
+
+<header class="site-header sticky-top py-1 bg-black">
+    <nav class="container d-flex flex-column flex-md-row justify-content-between align-items-center">
+        @if (SignInManager.IsSignedIn(User))
+        {
+            <a id="manage" class="fs-5 py-2 d-none d-md-inline-block" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">@UserManager.GetUserName(User)!</a>
+            <a class="py-2" href="/" aria-label="Home">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="d-block mx-auto" role="img" viewBox="0 0 24 24"><title>Продукт</title><circle cx="12" cy="12" r="10" /><path d="M14.31 8l5.74 9.94M9.69 8h11.48M7.38 12l5.74-9.94M9.69 16L3.95 6.06M14.31 16H2.83m13.79-4l-5.74 9.94" /></svg>
+            </a>
+            <form id="logoutForm" class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/Index", new { area = "" })">
+                <button id="logout" type="submit" class="nav-link btn btn-link text-light">Выход</button>
+            </form>
+        }
+        else
+        {
+            <a class="fs-5 py-2 d-none d-md-inline-block text-white text-decoration-none" href="~/Identity/Account/Login">Авторизация</a>
+            <a class="py-2" href="/" aria-label="Домашняя страница" title="Домашняя страница">
+                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="none"  stroke="currentColor"  class="bi bi-house" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M2 13.5V7h1v6.5a.5.5 0 0 0 .5.5h9a.5.5 0 0 0 .5-.5V7h1v6.5a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 13.5zm11-11V6l-2-2V2.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5z" />
+                    <path fill-rule="evenodd" d="M7.293 1.5a1 1 0 0 1 1.414 0l6.647 6.646a.5.5 0 0 1-.708.708L8 2.207 1.354 8.854a.5.5 0 1 1-.708-.708L7.293 1.5z" />
+                </svg>
+            </a>
+            <a class="fs-5 py-2 d-none d-md-inline-block text-white text-decoration-none" href="~/Identity/Account/Register">Регистрация</a>
+
+        }
+    </nav>
+</header>
+
+

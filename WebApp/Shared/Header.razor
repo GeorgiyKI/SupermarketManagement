@@ -1,0 +1,120 @@
+﻿@inherits LayoutComponentBase
+@using Microsoft.AspNetCore.Http
+@inject IViewCategoriesUseCase ViewCategoriesUseCase
+@inject NavigationManager NavigationManager
+@inject IHttpContextAccessor httpContextAccessor
+@inject IGetTransactionsUseCase GetTransactionsUseCase
+@inject UserManager<AppUser> _userManager
+@inject IHttpContextAccessor HttpContext
+@using Microsoft.AspNetCore.Identity;
+@using WebApp.Areas.Identity.Data;
+
+<header class=" u-clearfix u-header u-section-row-container container" id="sec-8ca7">
+    <div class="u-section-rows">
+        <div class="u-clearfix u-section-row u-section-row-1" data-animation-name="" data-animation-duration="0" data-animation-delay="0" data-animation-direction="" id="sec-fe57">
+            <div class="u-clearfix u-sheet u-valign-middle u-sheet-1">
+                <AuthorizeView>
+                    <Authorized>
+                        <ul class="nav  justify-content-between align-items-center">
+                            <li class="nav-item">
+                                <form action="/Identity/Account/Logout?returnUrl=%2F" method="post">
+                                    <button type="submit" class="btn btn-outline-dark u-text">Выход</button>
+                                </form>
+                            </li>
+                            <li class="nav-item">
+                                <p>Профиль: <a href="/account/about" class="text-decoration-underline text-black-50">@CashierName</a></p>
+                            </li>
+                            <li class="nav-item">
+                                <img src="homepageNew/images/-logos_black.png" style="width: 196px;">
+                            </li>
+                            <li class="nav-item">
+                                <p>Баланс: @Money р.</p>
+                            </li>
+                            <li class="nav-item">
+                                <button type="button" class="btn btn-outline-dark" @onclick="@(() => NavigationManager.NavigateTo($"/cart/{CashierName}", true))">
+                                    Корзина
+                                    @if (Count != 0)
+                                    {
+                                        <span class="position-absolute top-50 start-100 translate-middle badge rounded-pill bg-danger">
+                                            @Count
+                                            <span class="visually-hidden">New alerts</span>
+                                        </span>
+                                    }
+                                </button>
+                            </li>
+
+                        </ul>
+                    </Authorized>
+                    <NotAuthorized>
+                        <a href="https://nicepage.com/html-website-builder" class="u-hover-feature u-image u-logo u-image-1" data-image-width="882" data-image-height="430">
+                            <img src="homepageNew/images/-logos_black.png" class="u-logo-image u-logo-image-1">
+                        </a>
+                        <a class="u-text u-text-default u-text-1 text-black" href="Identity/Account/Login">Авторизация</a>
+                        <a class="u-text u-text-default u-text-2 text-black" href="Identity/Account/Register">Регистрация</a>
+                    </NotAuthorized>
+                </AuthorizeView>
+            </div>
+        </div>
+        <div class="u-border-3 u-border-black u-border-no-bottom u-border-no-left u-border-no-right u-section-row u-section-row-2" id="sec-f11b">
+            <div class="u-clearfix u-sheet u-sheet-2">
+                <div class="container">
+                    <ul class="nav nav-pills  justify-content-between">
+                        <li class="nav-item">
+                            <a class="nav-link text-black" aria-current="page" href="/">Главная</a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-black" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">Категории</a>
+                            <ul class="dropdown-menu">
+                                @foreach (var category in categories)
+                                {
+                                    <li><a class="dropdown-item" href=@($"/catalog/{category.Name}/{1}") @onclick=@(e => NavigationManager.NavigateTo($"/catalog/{category.Name}/{1}", true))>@category.Name</a></li>
+                                }
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-black" href="/service">Сервисные услуги</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-black" href="/customerservice">Клиентская служба</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-black" href="/back">Возврат товара</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+@code {
+    private IEnumerable<Category> categories;
+    [Parameter]
+    public int Count { get; set; }
+
+    [CascadingParameter]
+    private Task<AuthenticationState> _authState { get; set; }
+
+    public decimal Money { get; set; }
+
+    public AppUser User { get; set; }
+
+    public string CashierName { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        base.OnInitialized();
+        categories = ViewCategoriesUseCase.Execute();
+        User = await _userManager.GetUserAsync(HttpContext.HttpContext.User);
+        if (User != null)
+        {
+            CashierName = User.FirstName + User.LastName;
+            Money = User.Money;
+
+            var transactions = GetTransactionsUseCase.Execute(CashierName, DateTime.Today, DateTime.Today.AddDays(1)).Where(p => p.IsBuyed == false);
+            Count = transactions.Count();
+        }
+
+
+    }
+}

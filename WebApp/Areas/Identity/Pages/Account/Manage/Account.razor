@@ -1,0 +1,113 @@
+﻿@page "/account/about"
+
+@inject IGetTransactionsUseCase GetTransactionsUseCase
+@using Microsoft.AspNetCore.Http
+@inject UserManager<AppUser> _userManager
+@inject IHttpContextAccessor HttpContext
+@using Microsoft.AspNetCore.Identity;
+@using WebApp.Areas.Identity.Data;
+
+
+<body class="u-body u-xl-mode">
+    <h1 class="u-text text-center u-text-1">Управление профилем</h1>
+    <section class="u-align-center u-clearfix u-section-1" id="sec-d796">
+        <div class="u-clearfix u-sheet u-valign-top u-sheet-1">
+            <div class="u-expanded-width u-tab-links-align-center u-tabs u-tabs-1">
+                <ul class="u-spacing-15 u-tab-list u-unstyled" role="tablist">
+                    <li class="u-tab-item" role="presentation">
+                        <a class="active u-active-black u-border-2 u-border-grey-75 u-button-style u-tab-link u-white u-tab-link-1" id="link-tab-0da5" href="/account/about" role="tab" aria-controls="tab-0da5" aria-selected="true">История покупок</a>
+                    </li>
+                    <li class="u-tab-item" role="presentation">
+                        <a class="u-active-black u-border-2 u-border-grey-75 u-button-style u-tab-link u-white u-tab-link-2" id="link-tab-aa8f" href="/account/pay" role="tab" aria-controls="tab-aa8f" aria-selected="false">Пополнение кошелька</a>
+                    </li>
+                    <li class="u-tab-item" role="presentation">
+                        <a class="u-active-black u-border-2 u-border-grey-75 u-button-style u-tab-link u-white u-tab-link-3" id="link-tab-2917" href="/account/delete" role="tab" aria-controls="tab-2917" aria-selected="false">Удаление данных</a>
+                    </li>
+                </ul>
+                <nav class="u-tab-content">
+                    <nav class="container nav justify-content-around">
+                        <div class="col-3">
+                            <label for="startdate">Дата Начала</label>
+                            <input type="date" id="startdate" class="form-control" @bind-value="startDate" />
+                        </div>
+                        <div class="col-3">
+                            <label for="enddate">Конечная дата</label>
+                            <input type="date" id="enddate" class="form-control" @bind-value="endDate" />
+                        </div>
+                        <div class="col-2">
+                            <label>&nbsp;</label>
+                            <button type="button" class="btn btn-primary form-control" @onclick="LoadTransactions">Показать историю</button>
+                        </div>
+                    </nav>
+                    @if (transactions != null)
+                    {
+                        <table class="container table">
+                            <thead>
+                                <tr>
+                                    <th>Дата</th>
+                                    <th>Продукт</th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th>Количество</th>
+                                    <th style="text-align:right">Цена</th>
+                                    <th style="text-align:right">Всего</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var tran in transactions)
+                                {
+                                    <tr>
+                                        <td>@tran.TimeStamp.ToString("yyyy-MM-dd hh:mm")</td>
+                                        <td>@tran.ProductName</td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td>@tran.SoldQty</td>
+                                        <td style="text-align:right">@tran.Price р.</td>
+                                        <td style="text-align:right">@(tran.SoldQty * tran.Price) р.</td>
+                                    </tr>}
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="6">&nbsp;</td>
+                                    <td style="text-align:right">
+                                        <b>Итог:</b>
+                                    </td>
+                                    <td style="text-align:right">
+                                        <b>
+                                            @transactions.Sum(x => x.Price * x.SoldQty) р.
+                                        </b>
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    }
+
+
+                </nav>
+            </div>
+        </div>
+    </section>
+</body>
+
+@code
+ {  public AppUser User { get; set; }
+    private IEnumerable<Transaction> transactions;
+
+    private DateTime startDate;
+    private DateTime endDate;
+
+    protected override void OnInitialized()
+    {
+        startDate = DateTime.Today;
+        endDate = DateTime.Today;
+    }
+
+    private async Task LoadTransactions()
+    {
+        User = await _userManager.GetUserAsync(HttpContext.HttpContext.User);
+        transactions = GetTransactionsUseCase.Execute(User.FirstName + User.LastName, startDate, endDate).Where(p => p.IsBuyed == true);
+    }
+
+ }

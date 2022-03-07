@@ -1,0 +1,153 @@
+﻿@page "/"
+@inject UserManager<AppUser> _userManager
+@using Microsoft.AspNetCore.Identity;
+@using WebApp.Areas.Identity.Data;
+@inject IGetTransactionsUseCase GetTransactionsUseCase
+@inject IGetCategoryByNameUseCase GetCategoryByNameUseCase
+@inject IViewProductsByCategoryName ViewProductsByCategoryName
+@inject IViewCategoriesUseCase ViewCategoriesUseCase
+
+<body class="u-body u-xl-mode">
+    <section class="u-align-center u-black u-clearfix u-section-2" id="sec-814c">
+        <div class="u-clearfix u-sheet u-valign-middle-lg u-valign-middle-md u-valign-middle-xl u-sheet-1">
+            <h1 class="u-text u-text-1"> Для тех, кто серьезно настроен на победу!</h1>
+        </div>
+    </section>
+
+    <section class="u-clearfix u-section-3" id="sec-8e0d">
+        <div class="u-clearfix u-sheet u-sheet-1">
+            <div class="u-clearfix u-expanded-width u-gutter-10 u-layout-wrap u-layout-wrap-1">
+                <div class="u-layout" style="">
+                    <div class="u-layout-row" style="">
+                        <div class="u-align-left u-container-style u-image u-image-round u-layout-cell u-left-cell u-radius-50 u-shading u-size-30 u-size-xs-60 u-image-1" src="" data-image-width="870" data-image-height="486" data-animation-name="customAnimationIn" data-animation-duration="2000" data-animation-out="0">
+                            <div class="u-container-layout u-valign-top u-container-layout-1"></div>
+                        </div>
+                        <div class="u-align-center u-container-style u-layout-cell u-right-cell u-size-30 u-size-xs-60 u-layout-cell-2" src="">
+                            <div class="u-container-layout u-valign-top-sm u-valign-top-xs u-container-layout-2" src="">
+                                <h2 class="u-align-center-sm u-align-center-xs u-text u-text-1">
+                                    <span style="font-size: 1.875rem;">"Прекрасное ​обслуживание!"</span>
+                                </h2>
+                                <p class="u-text u-text-2">Илья Сергеевич Шиманович - белорусский пловец, призёр чемпионатов мира и Европы в эстафете и на дистанции 100 метров брассом в 25-метровом бассейне, обладатель мирового рекорда на этой дистанции</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="u-clearfix u-section-4" id="sec-7d43">
+        <div class="u-clearfix u-sheet u-valign-middle u-sheet-1">
+            <div class="u-clearfix u-expanded-width u-gutter-10 u-layout-wrap u-layout-wrap-1">
+                <div class="u-layout" style="">
+                    <div class="u-layout-row" style="">
+                        <div class="u-align-center u-container-style u-layout-cell u-left-cell u-size-30 u-size-xs-60 u-layout-cell-1" src="">
+                            <div class="u-container-layout u-container-layout-1" src="">
+                                <h2 class="u-text u-text-1"> "Скорость доставки поражает воображение!"</h2>
+                                <p class="u-text u-text-2">
+                                    Юлия Викторовна Нестеренко — белорусская легкоатлетка, олимпийская <span style="font-style: normal;"></span>чемпионка в беге на 100 метров. Лучшая спортсменка Белоруссии по версии газеты «Спортивная панорама». Заслуженный мастер спорта.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="u-align-left u-container-style u-image u-image-round u-layout-cell u-radius-50 u-right-cell u-shading u-size-30 u-size-xs-60 u-image-1" src="" data-image-width="720" data-image-height="534" data-animation-name="customAnimationIn" data-animation-duration="2000" data-animation-out="0">
+                            <div class="u-container-layout u-valign-top u-container-layout-2"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="u-clearfix u-section-5" id="sec-35b3">
+        <div class="u-clearfix u-sheet u-sheet-1">
+            <div class="u-clearfix u-expanded-width u-gutter-0 u-layout-wrap u-layout-wrap-1">
+                <div class="u-layout" style="">
+                    <div class="u-layout-row" style="">
+                        <div class="u-align-left u-container-style u-image u-image-round u-layout-cell u-left-cell u-radius-50 u-shading u-size-30 u-size-xs-60 u-image-1" src="" data-image-width="1000" data-image-height="563" data-animation-name="customAnimationIn" data-animation-duration="2000" data-animation-out="0">
+                            <div class="u-container-layout u-valign-top u-container-layout-1"></div>
+                        </div>
+                        <div class="u-align-center u-container-style u-layout-cell u-right-cell u-size-30 u-size-xs-60 u-layout-cell-2" src="">
+                            <div class="u-container-layout u-container-layout-2" src="">
+                                <h2 class="u-text u-text-1">"Такого ассортимента товаров я еще нигде не видел!"</h2>
+                                <p class="u-text u-text-2"> Давид Иван — словацкий футболист, полузащитник команды "Динамо-Брест"</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="u-black u-clearfix u-section-6" id="sec-86ac">
+        <div class="u-clearfix u-sheet u-valign-middle u-sheet-1">
+            <div class="u-expanded-width u-list u-list-1">
+                <div class="u-repeater u-repeater-1">
+                    <div class="u-align-center u-container-style u-list-item u-repeater-item">
+                        <div class="u-container-layout u-similar-container u-valign-middle u-container-layout-1">
+                            <h1 class="u-text u-text-default u-text-white u-title u-text-1" data-animation-name="counter" data-animation-event="scroll" data-animation-duration="3000">@countProducts</h1>
+                            <p class="u-custom-item u-text u-text-2">Количество товаров</p>
+                        </div>
+                    </div>
+                    <div class="u-align-center u-container-style u-list-item u-repeater-item">
+                        <div class="u-container-layout u-similar-container u-valign-middle u-container-layout-2">
+                            <h1 class="u-text u-text-default u-text-white u-title u-text-3" data-animation-name="counter" data-animation-event="scroll" data-animation-duration="3000">@_userManager.Users.Count()</h1>
+                            <p class="u-custom-item u-text u-text-4">Количество пользователей</p>
+                        </div>
+                    </div>
+                    <div class="u-align-center u-container-style u-list-item u-repeater-item">
+                        <div class="u-container-layout u-similar-container u-valign-middle u-container-layout-3">
+                            <h1 class="u-text u-text-default u-text-white u-title u-text-5" data-animation-name="counter" data-animation-event="scroll" data-animation-duration="3000">@countSelled</h1>
+                            <p class="u-custom-item u-text u-text-6">Количество покупок</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="u-align-center u-clearfix u-section-7" id="sec-d256">
+        <div class="u-clearfix u-sheet u-valign-middle u-sheet-1">
+            <div class="u-expanded-width u-list u-list-1">
+                <div class="u-repeater u-repeater-1">
+                    <div class="u-align-center u-container-style u-list-item u-repeater-item u-list-item-1">
+                        <div class="u-container-layout u-similar-container u-valign-top u-container-layout-1">
+                            <span class="u-file-icon u-icon u-icon-1"><img src="homepageNew/images/2972497.png" alt=""></span>
+                            <h3 class="u-text u-text-1">Скорость</h3>
+                            <p class="u-text u-text-2">Скорость обработки заказов поражает воображение!</p>
+                        </div>
+                    </div>
+                    <div class="u-align-center u-container-style u-list-item u-repeater-item u-list-item-2">
+                        <div class="u-container-layout u-similar-container u-valign-top u-container-layout-2">
+                            <span class="u-file-icon u-icon u-icon-2"><img src="homepageNew/images/3159310.png" alt=""></span>
+                            <h3 class="u-text u-text-3">Дизайн</h3>
+                            <p class="u-text u-text-4">Удобный, красивый и понятный дизайн для любого пользователя!</p>
+                        </div>
+                    </div>
+                    <div class="u-align-center u-container-style u-list-item u-repeater-item u-list-item-3">
+                        <div class="u-container-layout u-similar-container u-valign-top u-container-layout-3">
+                            <span class="u-file-icon u-icon u-icon-3"><img src="homepageNew/images/1851036.png" alt=""></span>
+                            <h3 class="u-text u-text-5">Лучшие товары</h3>
+                            <p class="u-text u-text-6">Высококачественные товары по низким ценам!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+@code {
+    int countUsers;
+    int countProducts;
+    int countSelled;
+
+    private IEnumerable<Category> categories;
+
+    protected override void OnInitialized()
+    {
+
+        countSelled = GetTransactionsUseCase.Execute(null, new DateTime(2015, 7, 20), DateTime.Today.AddDays(1)).Where(t => t.IsBuyed == true).Count();
+
+        categories = ViewCategoriesUseCase.Execute();
+
+        foreach (var item in categories)
+        {
+            countProducts += ViewProductsByCategoryName.Execute(item.Name).Count();
+        }
+    }
+}

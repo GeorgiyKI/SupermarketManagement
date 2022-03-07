@@ -1,0 +1,122 @@
+﻿@page "/editproduct/{productId}"
+@attribute [Authorize(Policy = "AdminOnly")]
+
+@inject NavigationManager NavigationManager
+@inject IAddProductUseCase AddProductUseCase
+@inject IGetProductByIdUseCase GetProductByIdUseCase
+@inject IEditProductUseCase EditProductUseCase
+@inject IViewCategoriesUseCase ViewCategoriesUseCase
+
+<main class="container">
+
+    <h3>Редактирование продукта</h3>
+    <br />
+    @if (product != null)
+    {
+        <EditForm Model="product" OnValidSubmit="OnValidSumit">
+            <DataAnnotationsValidator></DataAnnotationsValidator>
+            <ValidationSummary></ValidationSummary>
+
+            <div class="form-group">
+                <label for="name">Название</label>
+                <InputText id="name" @bind-Value="product.Name" class="form-control"></InputText>
+            </div>
+
+            <div class="form-group">
+                <label for="name">Описания</label>
+                <InputText id="description" @bind-Value="product.Desctiption" class="form-control"></InputText>
+            </div>
+
+            <div class="form-group">
+                <label for="category">Категория</label>
+                <select id="category" @bind="product.CategoryId" class="form-control">
+                    <option selected></option>
+                    @foreach (var cat in categories)
+                    {
+                        <option value="@cat.CategoryId">@cat.Name</option>
+                    }
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="price">Цена</label>
+                <InputNumber id="price" @bind-Value="product.Price" @bind-Value:format="F2" class="form-control"></InputNumber>
+            </div>
+
+            <div class="form-group">
+                <label for="qty">Количество</label>
+                <InputNumber id="qty" @bind-Value="product.Quantity" class="form-control"></InputNumber>
+            </div>
+
+            <div class="form-group">
+                <label for="imageData">Изображение</label>
+                <InputFile id="imageData" OnChange="@OnFileSelection" class="form-control"></InputFile>
+            </div>
+
+            <br />
+            <button type="submit" class="btn btn-primary">Сохранить</button>
+            <button type="button" class="btn btn-primary" @onclick="OnCancel">Отмена</button>
+            <br />
+        </EditForm>
+
+    }
+</main>
+<br />
+
+@code {
+    [Parameter]
+    public string ProductId { get; set; }
+
+    private Product product;
+    private IEnumerable<Category> categories;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        categories = ViewCategoriesUseCase.Execute();
+    }
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+
+        if (int.TryParse(this.ProductId, out int iProductId))
+        {
+            var prod = GetProductByIdUseCase.Execute(iProductId);
+            this.product = new Product
+            {
+                ProductId = prod.ProductId,
+                Name = prod.Name,
+                CategoryId = prod.CategoryId,
+                Price = prod.Price,
+                Quantity = prod.Quantity,
+                Desctiption = prod.Desctiption,
+                ImgUrl = prod.ImgUrl
+            };
+        }
+    }
+
+    private void OnValidSumit()
+    {
+        EditProductUseCase.Execute(this.product);
+        NavigationManager.NavigateTo("/products");
+    }
+
+    private void OnCancel()
+    {
+        NavigationManager.NavigateTo("/products");
+    }
+
+    private void OnFileSelection(InputFileChangeEventArgs e)
+    {
+        IBrowserFile imgFile = e.File;
+        var buffers = new byte[imgFile.Size];
+        imgFile.OpenReadStream().Read(buffers);
+        string imageType = imgFile.ContentType;
+        this.product.ImgUrl = $"data:{imageType};base64,{Convert.ToBase64String(buffers)}";
+
+
+
+    }
+
+}
