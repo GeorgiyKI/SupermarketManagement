@@ -138,7 +138,7 @@
         if (User != null)
         {
             SellProductUseCase.Execute(User.FirstName + User.LastName, productToSell.ProductId, 1, false);
-            NavigationManager.NavigateTo($"/catalog/{Category.Name}", true);
+            NavigationManager.NavigateTo($"/catalog/{Category.Name}/{Page}", true);
 
         }
         else
